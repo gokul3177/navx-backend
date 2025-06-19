@@ -16,20 +16,6 @@ export default function ResultsPanel({ algorithm, visitedCount, pathLength, time
       <p><strong>⏱️ Time:</strong> {timeTaken.toFixed(4)} seconds</p>
 
       <div style={{ marginTop: '10px' }}>
-        <div style={{ marginBottom: '10px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <strong>Visited Nodes</strong>
-            <span>{visitedCount}</span>
-          </div>
-          <div style={{
-            width: `${visitedCount * 3}px`,
-            height: '12px',
-            background: '#2196f3',
-            borderRadius: '4px',
-            marginTop: '4px'
-          }} />
-        </div>
-
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <strong>Path Length</strong>

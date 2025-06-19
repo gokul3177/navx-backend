@@ -26,25 +26,25 @@ export default function ControlPanel({
       {/* Algorithm selection */}
       <button
         onClick={() => setAlgo('bfs')}
-        style={{ backgroundColor: algo === 'bfs' ? '#333' : '' }}
+        style={{ backgroundColor: algo === 'bfs' ? 'yellow' : '' }}
       >
         BFS
       </button>
       <button
         onClick={() => setAlgo('dfs')}
-        style={{ backgroundColor: algo === 'dfs' ? '#333' : '' }}
+        style={{ backgroundColor: algo === 'dfs' ? 'yellow' : '' }}
       >
         DFS
       </button>
       <button
         onClick={() => setAlgo('astar')}
-        style={{ backgroundColor: algo === 'astar' ? '#333' : '' }}
+        style={{ backgroundColor: algo === 'astar' ? 'yellow' : '' }}
       >
         A*
       </button>
       <button
         onClick={() => setAlgo('dijkstra')}
-        style={{ backgroundColor: algo === 'dijkstra' ? '#333' : '' }}
+        style={{ backgroundColor: algo === 'dijkstra' ? 'yellow' : '' }}
       >
         Dijkstra
       </button>

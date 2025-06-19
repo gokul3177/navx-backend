@@ -43,53 +43,65 @@ export default function App() {
   };
 
   const startSimulation = async () => {
-    if (!Array.isArray(start) || !Array.isArray(goal) || start.length !== 2 || goal.length !== 2) {
-      alert("Please set both Start and Goal points.");
-      return;
-    }
+  if (!Array.isArray(start) || !Array.isArray(goal) || start.length !== 2 || goal.length !== 2) {
+    alert("Please set both Start and Goal points.");
+    return;
+  }
 
-    let result = { path: [], visited: [] };
-    const t0 = performance.now();
+  let result = { path: [], visited: [] };
+  const t0 = performance.now();
 
-    if (algo === 'bfs') result = bfs(start, goal, obstacles, gridSize);
-    else if (algo === 'dfs') result = dfs(start, goal, obstacles, gridSize);
-    else if (algo === 'astar') result = astar(start, goal, obstacles, gridSize);
-    else if (algo === 'dijkstra') result = dijkstra(start, goal, obstacles, gridSize);
+  if (algo === 'bfs') result = bfs(start, goal, obstacles, gridSize);
+  else if (algo === 'dfs') result = dfs(start, goal, obstacles, gridSize);
+  else if (algo === 'astar') result = astar(start, goal, obstacles, gridSize);
+  else if (algo === 'dijkstra') result = dijkstra(start, goal, obstacles, gridSize);
 
-    const t1 = performance.now();
-    const elapsedTime = (t1 - t0) / 1000;
+  const t1 = performance.now();
+  const elapsedTime = (t1 - t0) / 1000;
 
-    setMetrics({
-      visitedCount: result.visited.length,
-      pathLength: result.path.length,
-      timeTaken: elapsedTime
+  setMetrics({
+    visitedCount: result.visited.length,
+    pathLength: result.path.length,
+    timeTaken: elapsedTime
+  });
+
+  setPath(result.path || []);
+  setVisited(result.visited || []);
+  animatePath(result.path || []);
+
+  const payload = {
+    algorithm: algo.toUpperCase(),
+    start,
+    goal,
+    obstacles,
+    path: result.path,
+    visitedCount: result.visited.length,
+    pathLength: result.path.length,
+    timeTaken: elapsedTime
+  };
+
+  console.log("📦 Sending path to backend:", payload);
+
+  try {
+    const res = await fetch('https://navx-backend-production.up.railway.app/save-path', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
 
-    setPath(result.path || []);
-    setVisited(result.visited || []);
-    animatePath(result.path || []);
+    const data = await res.json();
 
-    try {
-      await fetch('http://localhost:4000/save-path', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          algorithm: algo.toUpperCase(),
-          start,
-          goal,
-          obstacles,
-          path: result.path,
-          visitedCount: result.visited.length,
-          pathLength: result.path.length,
-          timeTaken: elapsedTime
-        })
-      });
-      console.log('✅ Path saved to MySQL');
+    if (res.ok) {
+      console.log('✅ Path saved successfully:', data);
       setRefreshKey(prev => prev + 1);
-    } catch (error) {
-      console.error('❌ Error saving path:', error);
+    } else {
+      console.error('❌ Server responded with error:', res.status, data);
     }
-  };
+  } catch (error) {
+    console.error('❌ Network error while saving path:', error);
+  }
+};
+
 
   const animatePath = (path = []) => {
   let i = 0;
@@ -155,7 +167,7 @@ export default function App() {
   return (
     <div>
       <h2 style={{ textAlign: 'center', marginTop: '20px' }}>
-        NAVX - Robot Pathfinding Simulator
+        NAVX
       </h2>
 
       <ControlPanel
@@ -198,11 +210,11 @@ export default function App() {
         />
       </div>
 
-     <ResultsTable refreshKey={refreshKey} />
+      <ResultsTable refreshKey={refreshKey} />
 
 
       <p style={{ textAlign: 'center', marginTop: '40px', fontSize: '14px', color: '#777' }}>
-        Built with ❤️ by Team NAVX
+        Built with ❤️ by Team NavX for RCS
       </p>
     </div>
   );
